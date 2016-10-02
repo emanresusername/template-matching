@@ -7,7 +7,7 @@ import boofcv.struct.image.GrayF32
 
 import scala.collection.JavaConversions._
 
-object ImageTester extends App {
+object ImageTester {
   /**
     * Demonstrates how to search for matches of a template inside an image
     *
@@ -33,11 +33,5 @@ object ImageTester extends App {
 
   def doesImageContainPart(fullImagePath: String, partOfImagePath: String): Boolean = {
     findMatches(fullImagePath, partOfImagePath, 1).exists(_.score == -0.0)
-  }
-
-  if(doesImageContainPart(args(0), args(1))) {
-    Console.print(true)
-  } else {
-    Console.print(false)
   }
 }
