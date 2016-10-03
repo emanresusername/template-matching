@@ -1,24 +1,23 @@
 package me.practechal.templatematching
 
-import java.io.{ BufferedReader, InputStreamReader, PrintWriter }
-import java.net.ServerSocket
-import scala.util.Try
+import rapture.mime.MimeTypes
+import rapture.http._, httpBackends.jetty._
+import rapture.io._
+import rapture.codec._, encodings.`UTF-8`._
+import rapture.json._, jsonBackends.circe._
 
 object Server extends App {
-  def processInput(line: String): Boolean = {
-    val Array(full, part) = line.split("@")
-    ImageTester.doesImageContainPart(full, part)
+
+  case class FullPart(full: String, part: String)
+
+  HttpServer.listen(args(0).toInt) { request ⇒
+    val fullPart = Json.parse(request.body).as[FullPart]
+    val boolean = ImageTester.doesImageContainPart(fullPart.full, fullPart.part)
+    StreamResponse(
+      200, Nil, MimeTypes.`application/json`, { os ⇒
+        boolean.toString.input > os
+        os.close()
+      }
+    )
   }
-
-  val serverSocket = new ServerSocket(args(0).toInt)
-  val clientSocket = serverSocket.accept()
-  val out = new PrintWriter(clientSocket.getOutputStream, true)
-  val in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream))
-
-  for {
-    line ← Iterator.continually(in.readLine()).takeWhile(_ != null)
-  } {
-    Try {
-      out.println(processInput(line))
- }  }
 }
