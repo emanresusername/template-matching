@@ -19,11 +19,18 @@ It accepts json in the format
 }
 ```
 
+for `POST` requests
+and query params in the format:
+
+`?full=/path/to/full/image&part=/path/to/full/image`
+
+for `GET` requests
+
 and responds with `true` if `part` is contained in `full` and `false` otherwise
 
 ## Programmatically
 ```scala
-import me.practechal.templatematching.ImageTester
+import my.will.be.done.templatematching.ImageTester
 
 ImageTester.doesImageContainPart("/path/to/full/image", "/path/to/part/of/image")
 ```

@@ -1,22 +1,22 @@
 scalaVersion := "2.11.8"
-organization := "practechal.me"
+organization := "my.will.be.done"
 name := "template-matching"
-version := "0.2.0"
+version := "0.3.0"
 
 libraryDependencies ++= {
   val boofcvVersion = "0.24.1"
   val boofcvOrg = "org.boofcv"
-  val raptureVersion = "2.0.0-M7"
-  val raptureOrg = "com.propensive"
+  val circeVersion = "0.6.1"
 
   Seq(
-    boofcvOrg  % "core"                % boofcvVersion,
-    raptureOrg %% "rapture-http-jetty" % raptureVersion,
-    raptureOrg %% "rapture-json-circe" % raptureVersion
+    boofcvOrg            % "core"             % boofcvVersion,
+    "com.typesafe.akka" %% "akka-http"        % "3.0.0-RC1",
+    "de.heikoseeberger" %% "akka-http-circe"  % "1.11.0",
+    "io.circe"          %% "circe-generic"    % circeVersion
   )
 }
 
-mainClass in assembly := Some("me.practechal.templatematching.Server")
+mainClass in assembly := Some("my.will.be.done.templatematching.WebServer")
 
 assemblyMergeStrategy in assembly := {
   case PathList("javax", "servlet", xs @ _*)         ⇒

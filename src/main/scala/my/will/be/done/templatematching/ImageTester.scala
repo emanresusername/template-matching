@@ -1,4 +1,4 @@
-package me.practechal.templatematching
+package my.will.be.done.templatematching
 
 import boofcv.factory.feature.detect.template.{FactoryTemplateMatching, TemplateScoreType}
 import boofcv.io.image.UtilImageIO
