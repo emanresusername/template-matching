@@ -1,7 +1,7 @@
 scalaVersion := "2.11.8"
 organization := "my.will.be.done"
 name := "template-matching"
-version := "0.3.0"
+version := "0.3.1"
 
 libraryDependencies ++= {
   val boofcvVersion = "0.24.1"
@@ -10,7 +10,7 @@ libraryDependencies ++= {
 
   Seq(
     boofcvOrg            % "core"             % boofcvVersion,
-    "com.typesafe.akka" %% "akka-http"        % "3.0.0-RC1",
+    "com.typesafe.akka" %% "akka-http"        % "10.0.0",
     "de.heikoseeberger" %% "akka-http-circe"  % "1.11.0",
     "io.circe"          %% "circe-generic"    % circeVersion
   )

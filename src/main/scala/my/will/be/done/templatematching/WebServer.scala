@@ -1,8 +1,12 @@
 package my.will.be.done.templatematching
 
+import akka.stream.scaladsl.FileIO
+import java.io.File
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.Multipart.FormData.BodyPart
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import scala.io.StdIn
@@ -24,6 +28,14 @@ object WebServer extends App {
     Json.fromBoolean(ImageTester.doesImageContainPart(full, part))
   }
 
+  def handleFilePart(filePart: BodyPart) = {
+    val name = filePart.name
+    val tmpFile = File.createTempFile(name, filePart.filename.orNull)
+    filePart.entity.dataBytes.runWith(FileIO.toPath(tmpFile.toPath)).map{ _ =>
+      name -> tmpFile
+    }
+  }
+
   val route =
     path("") {
       get {
@@ -33,7 +45,20 @@ object WebServer extends App {
           }
         }
       } ~ post {
-        entity(as[FullPart]) { fullPart ⇒
+        entity(as[Multipart.FormData]) { formData ⇒
+          onSuccess(
+            formData.parts.mapAsync[(String, File)](1) {
+              case full: BodyPart if full.name == "full" ⇒
+                handleFilePart(full)
+              case part: BodyPart if part.name == "part" ⇒
+                handleFilePart(part)
+            }.runFold(Map.empty[String, File])((map, tuple) => map + tuple)
+          ) { fileMap ⇒
+            complete {
+              Json.fromBoolean(ImageTester.doesImageContainPart(fileMap("full"), fileMap("part")))
+            }
+          }
+        } ~ entity(as[FullPart]) { fullPart ⇒
           complete {
             doesImageContainPart(fullPart.full, fullPart.part)
           }

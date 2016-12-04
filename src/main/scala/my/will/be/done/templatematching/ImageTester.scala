@@ -1,7 +1,11 @@
 package my.will.be.done.templatematching
 
+import java.awt.image.BufferedImage;
+import java.io.File
+import javax.imageio.ImageIO;
+
 import boofcv.factory.feature.detect.template.{FactoryTemplateMatching, TemplateScoreType}
-import boofcv.io.image.UtilImageIO
+import boofcv.io.image.{ConvertBufferedImage, UtilImageIO}
 import boofcv.struct.feature.Match
 import boofcv.struct.image.GrayF32
 
@@ -29,6 +33,18 @@ object ImageTester {
     val image = UtilImageIO.loadImage(fullImagePath, classOf[GrayF32])
     val template = UtilImageIO.loadImage(partOfImagePath, classOf[GrayF32])
     findMatches(image, template, 1)
+  }
+
+  def convertToGrayF32(image: BufferedImage): GrayF32 = {
+    ConvertBufferedImage.convertFromSingle(image, null.asInstanceOf[GrayF32], classOf[GrayF32])
+  }
+
+  def findMatches(fullImage: BufferedImage, partOfImage: BufferedImage, expectedMatches: Int): Seq[Match] = {
+    findMatches(convertToGrayF32(fullImage), convertToGrayF32(partOfImage), expectedMatches)
+  }
+
+  def doesImageContainPart(fullImage: File, partOfImage: File): Boolean = {
+    findMatches(ImageIO.read(fullImage), ImageIO.read(partOfImage), 1).exists(_.score == -0.0)
   }
 
   def doesImageContainPart(fullImagePath: String, partOfImagePath: String): Boolean = {
