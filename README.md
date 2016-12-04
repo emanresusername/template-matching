@@ -10,7 +10,7 @@ Then to run the server on port `9999` you'd do:
 /path/to/where/you/saved-or-assembled/template-matching-<version> 9999
 ```
 
-It accepts json in the format
+It accepts a json body in the format
 
 ```json
 {
@@ -19,10 +19,16 @@ It accepts json in the format
 }
 ```
 
+or form data in the format:
+
+```sh
+curl --form "full=@/path/to/full/image" --form "part=@/path/to/part/of/image" $HOST:$PORT
+```
+
 for `POST` requests
 and query params in the format:
 
-`?full=/path/to/full/image&part=/path/to/full/image`
+`?full=/path/to/full/image&part=/path/to/part/of/image`
 
 for `GET` requests
 
