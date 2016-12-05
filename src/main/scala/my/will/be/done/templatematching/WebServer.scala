@@ -37,7 +37,7 @@ object WebServer extends App {
   }
 
   val route =
-    path("") {
+    pathSingleSlash {
       get {
         parameters("full", "part") { (full, part) ⇒
           complete {
