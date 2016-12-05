@@ -1,7 +1,7 @@
 scalaVersion := "2.11.8"
 organization := "my.will.be.done"
 name := "template-matching"
-version := "0.3.1"
+version := "0.3.2"
 
 libraryDependencies ++= {
   val boofcvVersion = "0.24.1"
