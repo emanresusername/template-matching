@@ -1,12 +1,12 @@
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.1"
 organization := "my.will.be.done"
 name := "template-matching"
-version := "0.3.2"
+version := "0.4.0"
 
 libraryDependencies ++= {
   val boofcvVersion = "0.26"
   val boofcvOrg = "org.boofcv"
-  val circeVersion = "0.6.1"
+  val circeVersion = "0.7.0-M1"
 
   Seq(
     boofcvOrg            % "core"             % boofcvVersion,
