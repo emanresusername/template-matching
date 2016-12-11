@@ -24,8 +24,9 @@ object ImageTester {
     // create template matcher.
     val matcher = FactoryTemplateMatching.createMatcher(TemplateScoreType.SUM_DIFF_SQ, classOf[GrayF32])
     // Find the points which match the template the best
+    matcher.setImage(image)
     matcher.setTemplate(template, null, expectedMatches)
-    matcher.process(image)
+    matcher.process
     matcher.getResults.toList
   }
 

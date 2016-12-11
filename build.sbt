@@ -4,7 +4,7 @@ name := "template-matching"
 version := "0.3.2"
 
 libraryDependencies ++= {
-  val boofcvVersion = "0.24.1"
+  val boofcvVersion = "0.26"
   val boofcvOrg = "org.boofcv"
   val circeVersion = "0.6.1"
 
