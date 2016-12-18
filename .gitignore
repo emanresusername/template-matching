@@ -2,3 +2,4 @@
 target/
 .DS_Store
 .ensime*
+/ensime.sbt
