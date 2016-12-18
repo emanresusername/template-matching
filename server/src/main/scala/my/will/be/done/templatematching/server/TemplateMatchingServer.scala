@@ -1,4 +1,4 @@
-package my.will.be.done.templatematching
+package my.will.be.done.templatematching.server
 
 import akka.stream.scaladsl.FileIO
 import java.io.File
@@ -13,14 +13,18 @@ import scala.io.StdIn
 import io.circe.{Decoder, Json}
 import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.CirceSupport._
+import com.typesafe.config.ConfigFactory
+import example._ // TODO: figure out twirl file/package structure
 
-object WebServer extends App {
+object TemplateMatchingServer extends App {
   implicit val system = ActorSystem("template-matching")
   implicit val materializer = ActorMaterializer()
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext = system.dispatcher
 
-  val port = args(0).toInt
+  val config = ConfigFactory.load()
+  val interface = config.getString("http.interface")
+  val port = config.getInt("http.port")
 
   case class FullPart(full: String, part: String)
 
@@ -38,6 +42,20 @@ object WebServer extends App {
 
   val route =
     pathSingleSlash {
+      get {
+        complete {
+          example.html.index.render()
+        }
+      }
+    } ~
+      pathPrefix("assets" / Remaining) { file =>
+        // optionally compresses the response with Gzip or Deflate
+        // if the client accepts compressed responses
+        encodeResponse {
+          getFromResource("public/" + file)
+        }
+      } ~
+    path("api") {
       get {
         parameters("full", "part") { (full, part) ⇒
           complete {
@@ -66,11 +84,7 @@ object WebServer extends App {
       }
     }
 
-  val bindingFuture = Http().bindAndHandle(route, "localhost", port)
+  val bindingFuture = Http().bindAndHandle(route, interface, port)
 
-  println(s"Server online at http://localhost:$port/\nPress RETURN to stop...")
-  StdIn.readLine() // let it run until user presses return
-  bindingFuture
-    .flatMap(_.unbind()) // trigger unbinding from the port
-    .onComplete(_ => system.terminate()) // and shutdown when done
+  println(s"Server online at http://$interface:$port")
 }

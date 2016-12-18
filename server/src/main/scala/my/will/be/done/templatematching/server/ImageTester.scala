@@ -1,4 +1,4 @@
-package my.will.be.done.templatematching
+package my.will.be.done.templatematching.server
 
 import java.awt.image.BufferedImage;
 import java.io.File

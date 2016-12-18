@@ -1,0 +1,7 @@
+@main("Template Matching") {
+  @scalajs.html.scripts(
+    "template-matching-client",
+    name => s"/assets/$name",
+    name => getClass.getResource(s"/public/$name") != null
+  )
+}
