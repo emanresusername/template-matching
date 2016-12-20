@@ -17,14 +17,14 @@ import com.typesafe.config.ConfigFactory
 import example._ // TODO: figure out twirl file/package structure
 
 object TemplateMatchingServer extends App {
-  implicit val system = ActorSystem("template-matching")
+  implicit val system       = ActorSystem("template-matching")
   implicit val materializer = ActorMaterializer()
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext = system.dispatcher
 
-  val config = ConfigFactory.load()
+  val config    = ConfigFactory.load()
   val interface = config.getString("http.interface")
-  val port = config.getInt("http.port")
+  val port      = config.getInt("http.port")
 
   case class FullPart(full: String, part: String)
 
@@ -33,9 +33,9 @@ object TemplateMatchingServer extends App {
   }
 
   def handleFilePart(filePart: BodyPart) = {
-    val name = filePart.name
+    val name    = filePart.name
     val tmpFile = File.createTempFile(name, filePart.filename.orNull)
-    filePart.entity.dataBytes.runWith(FileIO.toPath(tmpFile.toPath)).map{ _ =>
+    filePart.entity.dataBytes.runWith(FileIO.toPath(tmpFile.toPath)).map { _ =>
       name -> tmpFile
     }
   }
@@ -55,34 +55,37 @@ object TemplateMatchingServer extends App {
           getFromResource("public/" + file)
         }
       } ~
-    path("api") {
-      get {
-        parameters("full", "part") { (full, part) ⇒
-          complete {
-            doesImageContainPart(full, part)
-          }
-        }
-      } ~ post {
-        entity(as[Multipart.FormData]) { formData ⇒
-          onSuccess(
-            formData.parts.mapAsync[(String, File)](1) {
-              case full: BodyPart if full.name == "full" ⇒
-                handleFilePart(full)
-              case part: BodyPart if part.name == "part" ⇒
-                handleFilePart(part)
-            }.runFold(Map.empty[String, File])((map, tuple) => map + tuple)
-          ) { fileMap ⇒
+      path("api") {
+        get {
+          parameters("full", "part") { (full, part) ⇒
             complete {
-              Json.fromBoolean(ImageTester.doesImageContainPart(fileMap("full"), fileMap("part")))
+              doesImageContainPart(full, part)
             }
           }
-        } ~ entity(as[FullPart]) { fullPart ⇒
-          complete {
-            doesImageContainPart(fullPart.full, fullPart.part)
+        } ~ post {
+          entity(as[Multipart.FormData]) { formData ⇒
+            onSuccess(
+              formData.parts
+                .mapAsync[(String, File)](1) {
+                  case full: BodyPart if full.name == "full" ⇒
+                    handleFilePart(full)
+                  case part: BodyPart if part.name == "part" ⇒
+                    handleFilePart(part)
+                }
+                .runFold(Map.empty[String, File])((map, tuple) => map + tuple)
+            ) { fileMap ⇒
+              complete {
+                Json.fromBoolean(
+                  ImageTester.doesImageContainPart(fileMap("full"), fileMap("part")))
+              }
+            }
+          } ~ entity(as[FullPart]) { fullPart ⇒
+            complete {
+              doesImageContainPart(fullPart.full, fullPart.part)
+            }
           }
         }
       }
-    }
 
   val bindingFuture = Http().bindAndHandle(route, interface, port)
 
