@@ -4,5 +4,5 @@ Seq(
   "org.scala-js"     % "sbt-scalajs"     % "0.6.13",
   "io.spray"         % "sbt-revolver"    % "0.8.0",
   "com.typesafe.sbt" % "sbt-twirl"       % "1.3.0",
-  "com.geirsson"     % "sbt-scalafmt"    % "0.5.0-RC3"
+  "com.geirsson"     % "sbt-scalafmt"    % "0.5.1"
 ).map(addSbtPlugin)
