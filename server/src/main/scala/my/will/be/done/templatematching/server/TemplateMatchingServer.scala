@@ -15,8 +15,9 @@ import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.CirceSupport._
 import com.typesafe.config.ConfigFactory
 import example._ // TODO: figure out twirl file/package structure
+import akkahttptwirl.TwirlSupport
 
-object TemplateMatchingServer extends App {
+object TemplateMatchingServer extends App with TwirlSupport {
   implicit val system       = ActorSystem("template-matching")
   implicit val materializer = ActorMaterializer()
   // needed for the future flatMap/onComplete in the end

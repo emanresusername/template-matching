@@ -1,6 +1,6 @@
 lazy val commonSettings = Seq(
   organization := "my.will.be.done",
-  version := "0.5.0",
+  version := "0.5.1",
   scalaVersion := "2.12.1"
 )
 
@@ -13,16 +13,18 @@ lazy val server = (project in file("server"))
     libraryDependencies ++= {
       val boofcvVersion = "0.26"
       val boofcvOrg     = "org.boofcv"
-      val circeVersion  = "0.7.0-M1"
+      val circeVersion  = "0.7.0"
 
       Seq(
         boofcvOrg           % "core"             % boofcvVersion,
-        "com.typesafe.akka" %% "akka-http"       % "10.0.0",
-        "de.heikoseeberger" %% "akka-http-circe" % "1.11.0",
+        "com.typesafe.akka" %% "akka-http"       % "10.0.3",
+        "de.heikoseeberger" %% "akka-http-circe" % "1.12.0",
         "io.circe"          %% "circe-generic"   % circeVersion,
-        "com.vmunier"       %% "scalajs-scripts" % "1.1.0"
+        "com.vmunier"       %% "scalajs-scripts" % "1.1.0",
+        "btomala"           %% "akka-http-twirl" % "1.2.0"
       )
     },
+    resolvers += "Bartek's repo at Bintray" at "https://dl.bintray.com/btomala/maven",
     mainClass in assembly := Some(
       "my.will.be.done.templatematching.server.TemplateMatchingServer"),
     assemblyMergeStrategy in assembly := {
